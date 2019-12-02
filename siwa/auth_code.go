@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 // AuthResp represents auth endpoint result
@@ -27,6 +29,7 @@ func GetAuthCode(ctx context.Context, state string) (*AuthResp, error) {
 		select {
 		case ar = <-ch:
 			if ar.State != state {
+				fmt.Printf("Unexpected response %v\n", ar)
 				continue
 			}
 			fmt.Println("Got result")
@@ -43,13 +46,20 @@ func startHTTPServer(ch chan<- AuthResp) *http.Server {
 	srv := &http.Server{Addr: "localhost:8080"}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "%s %s %s\n", r.Method, r.URL, r.Proto)
-		q := r.URL.Query()
+		err := r.ParseForm()
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+		fmt.Fprintf(w, "Got response parameter. Close the browser.")
+
+		spew.Dump(r.Form)
+
 		ch <- AuthResp{
-			Code:    q.Get("code"),
-			IDToken: q.Get("id_token"),
-			State:   q.Get("state"),
-			User:    q.Get("user"),
+			Code:    r.Form.Get("code"),
+			IDToken: r.Form.Get("id_token"),
+			State:   r.Form.Get("state"),
+			User:    r.Form.Get("user"),
 		}
 	})
 

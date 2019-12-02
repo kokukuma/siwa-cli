@@ -90,7 +90,7 @@ func getSecret(config Config) (string, error) {
 	// create a new token
 	token := jwt.NewWithClaims(alg, claims)
 
-	token.Header["kid"] = "BF4R44V675"
+	token.Header["kid"] = config.AppleKeyID
 
 	privKey, err := loadP8Key(config.AppleKey)
 	if err != nil {

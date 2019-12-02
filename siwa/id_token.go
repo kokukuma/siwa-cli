@@ -51,7 +51,8 @@ func getHeader(idToken string) (*jws.Header, error) {
 
 }
 
-type claims struct {
+// Claims represents IDToken cleams
+type Claims struct {
 	Iss   string `json:"iss"`
 	Aud   string `json:"aud"`
 	Exp   int64  `json:"exp"`
@@ -61,7 +62,8 @@ type claims struct {
 	Nonce string `json:"nonce"`
 }
 
-func (c *claims) Valid() error {
+// Valid is implimention of jwt-go.Claims interface.
+func (c *Claims) Valid() error {
 	// Verify that the iss field contains https://appleid.apple.com
 	if c.Iss != appleCom {
 		return errors.New("invalid iss")
@@ -82,12 +84,12 @@ func (c *claims) Valid() error {
 }
 
 // ValidateIDToken returns verified IDToken
-func ValidateIDToken(idToken, code string, checkNonce func(nonce string) error) (*claims, error) {
+func ValidateIDToken(idToken, code string, checkNonce func(nonce string) error) (*Claims, error) {
 	if idToken == "" {
 		return nil, errors.New("idToken must be specified")
 	}
 
-	c := claims{}
+	c := Claims{}
 
 	// validation is executed in this function
 	token, err := jwt.ParseWithClaims(idToken, &c, func(t *jwt.Token) (interface{}, error) {
