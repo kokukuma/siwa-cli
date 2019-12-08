@@ -63,9 +63,6 @@ func main() {
 	spew.Dump(ar)
 	code := ar.Code
 
-	// code := "cfe31489983a845f28d4306365e64ca1a.0.nrsyr.6h1e8y209iahNFEhVUNXWg"
-	// get id_token from token endpoint
-	// config.RedirectURI = "https://fury-panda-siwa.ms-sakura.dev5s.com/jp/android/siwa/login"
 	token, err := siwa.GetAccessToken(code, config)
 	if err != nil {
 		fmt.Println(err)
