@@ -9,41 +9,11 @@
 + Download Apple Key
 
 ### Use it
++ run redirect server 
 ```
-go run .
+go run cmd/redirector/main.go
 ```
-
-### local redirector
-``` php
-<?php
-$url = "http://localhost:8080";
-$url .= "?code=" .$_GET['code'];
-$url .= "&id_token=" .$_GET['id_token'];
-$url .= "&state=" .$_GET['state'];
-$url .= "&user=" .$_GET['user'];
-header("location: $url");
+### Use it
 ```
-
-``` python
-import BaseHTTPServer, SimpleHTTPServer
-import ssl
-
-path = "/etc/letsencrypt/live/hostname"
-
-class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-
-    def do_POST(self):
-        self.data_string = self.rfile.read(int(self.headers['Content-Length']))
-        if self.path == '/localredirect':
-            url = 'http://localhost:8080?'
-        self.send_response(302)
-        self.send_header('Location', url + self.data_string)
-        self.end_headers()
-
-# httpd = BaseHTTPServer.HTTPServer(('10.146.0.36', 443), SimpleHTTPServer.SimpleHTTPRequestHandler)
-httpd = BaseHTTPServer.HTTPServer(('10.146.0.36', 443), ServerHandler)
-httpd.socket = ssl.wrap_socket (httpd.socket, keyfile= path + 'privkey.pem', certfile=path + 'fullchain.pem', server_side=True)
-httpd.serve_forever()
+go run cmd/siwacli/main.go
 ```
